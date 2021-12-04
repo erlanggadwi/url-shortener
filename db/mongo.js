@@ -1,7 +1,7 @@
 const monk = require('monk')
 
 // Connection URL
-var url = "";
+var url = "mongodb+srv://xixi:xixi28@cluster0.gzbwx.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 try {
     if (url == '') throw console.log('Cek konfigurasi database, var url belum diisi');
 } catch (e) {

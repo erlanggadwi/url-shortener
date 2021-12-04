@@ -1,7 +1,16 @@
 section {
     padding-top: 5rem;
 }
-
+body {
+    width: 100%;
+    min-height: 100vh;
+    background-image: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5)), url(https://images.alphacoders.com/118/1182103.png);
+    background-position: center;
+    background-size: cover;
+    justify-content: center;
+    align-items: center;
+    font-family: 'comic sans ms'; 
+}
 .tengahin {
     display: flex;
     justify-content: center;

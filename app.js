@@ -15,7 +15,7 @@ const isUrl = (url) => {
 
 function makeid(length) {
     let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
     for (let i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() *
@@ -76,7 +76,6 @@ app.get('/:id', async (req, res, next) => {
         else res.redirect(result.url)
     })
 })
-
 app.post('/create', async (req, res) => {
     const url = req.body.url,
         costum = req.body.costum
@@ -90,8 +89,50 @@ app.post('/create', async (req, res) => {
         status: false,
         message: "Harap masukkan url parameter yang valid"
     })
-    const id = costum ? costum : makeid(6)
-    const delete_id = makeid(18)
+    const id = costum ? costum : makeid(5)
+    const delete_id = makeid(10)
+    const check = await db.findOne({
+        id
+    })
+    if (check) return res.status(400).json({
+        status: false,
+        message: "Id tersebut sudah ada, silahkan coba lagi atau ganti dengan yang lain"
+    })
+ 
+    db.insert({
+        id,
+        url,
+        delete: delete_id
+    }).then(() => res.status(200).json({
+        status: true,
+        message: "Erdwpe Shortlink",
+        result: {
+            id,
+            delete: delete_id
+        }
+    })).catch((err) => {
+        console.log(err)
+        res.status(500).json({
+            status: false,
+            message: "Internal server error"
+        })
+    })
+})
+app.get('/create.php', async (req, res) => {
+    const url = req.query.url,
+        costum = req.query.costum
+
+    if (!url) return res.status(400).json({
+        status: false,
+        message: "Masukkan parameter url"
+    })
+
+    if (!isUrl(url)) return res.status(400).json({
+        status: false,
+        message: "Harap masukkan url parameter yang valid"
+    })
+    const id = costum ? costum : makeid(5)
+    const delete_id = makeid(10)
     const check = await db.findOne({
         id
     })
@@ -106,17 +147,13 @@ app.post('/create', async (req, res) => {
         delete: delete_id
     }).then(() => res.status(200).json({
         status: true,
-        message: "Created by aqulzz",
         result: {
-            id,
-            delete: delete_id
+            url: req.protocol+"://"+req.hostname+'/'+id,
+            delete: req.protocol+"://"+req.hostname+'/delete/'+delete_id
         }
     })).catch((err) => {
         console.log(err)
-        res.status(500).json({
-            status: false,
-            message: "Internal server error"
-        })
+        res.sendStatus(500)
     })
 })
 
